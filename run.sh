@@ -25,9 +25,11 @@ if [[ ! -f ${SCRIPT_DIR}/venv/bin/python ]]; then
 fi
 
 # SO for sick lidar
+SICK_LIDAR_SO=$()
 # viam tools needed for utils.py
-#RUST_UTILS_SO=$(find "${SCRIPT_DIR}" -name libviam_rust_utils.so -printf '%h')
-#export LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:${RUST_UTILS_SO}
+RUST_UTILS_SO=$(find "${SCRIPT_DIR}" -name libviam_rust_utils.so -printf '%h')
+
+export LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:${RUST_UTILS_SO}:${SICK_LIDAR_SO}
 
 # execute script
 exec "${SCRIPT_DIR}"/venv/bin/python3 "${SCRIPT_DIR}"/main.py "$@"

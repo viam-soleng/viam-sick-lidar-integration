@@ -1,6 +1,8 @@
 # Viam Sick Lidar Integration
 
-TIM Lidar scanner integrations
+TIM Lidar scanner Viam integrations
+
+## Building
 
 ## TODO
 
