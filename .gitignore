@@ -1,5 +1,9 @@
 .venv
 venv
+__pycache__
+*.pyc
 .idea
 
+sickag
 sick_scan_ws
+lib
