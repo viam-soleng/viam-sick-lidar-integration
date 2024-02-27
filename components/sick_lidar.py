@@ -2,8 +2,8 @@ import asyncio
 import logging
 import math
 import numpy as np
+import os
 
-## TODO: sick_scan_api
 from sick_scan_api import *
 from ctypes import CDLL, c_void_p
 
@@ -65,19 +65,20 @@ class SickLidar(Camera, Reconfigurable):
     @classmethod
     def  validate_config(cls, config: ComponentConfig) -> Sequence[str]:
         attributes_dict = struct_to_dict(config.attributes)
-        launch_file = attributes_dict.get("launch_file", "")
+
+        launch_file = attributes_dict.get('launch_file', '')
         assert isinstance(launch_file, str)
-        if launch_file == "":
-            raise Exception("the launch_file argument is required and should contain the launch file name.")
+        if launch_file == '':
+            raise Exception('the launch_file argument is required and should contain the launch file name.')
 
-        if "host" in attributes_dict:
-            assert isinstance(attributes_dict["host"], str)
+        if 'host' in attributes_dict:
+            assert isinstance(attributes_dict['host'], str)
 
-        if "receiver" in attributes_dict:
-            assert isinstance(attributes_dict["receiver"], str)
+        if 'receiver' in attributes_dict:
+            assert isinstance(attributes_dict['receiver'], str)
 
-        if "segments" in attributes_dict:
-            assert isinstance(attributes_dict["segments"], float)
+        if 'segments' in attributes_dict:
+            assert isinstance(attributes_dict['segments'], float)
         return []
 
     def update_msg(self, msg):
@@ -87,29 +88,26 @@ class SickLidar(Camera, Reconfigurable):
                 self.msgs = self.msgs[1:]
 
     def reconfigure(self, config: ComponentConfig, dependencies: Mapping[ResourceName, ResourceBase]):
-        """
-        TODO: update so library
-        """
         self.lock = Lock()
         self.msgs = []
-        self.sick_scan_library = SickScanApiLoadLibrary(["build/"], "libsick_scan_shared_lib.so")
+        self.sick_scan_library = SickScanApiLoadLibrary(os.environ['LD_LIBRARY_PATH'].split(), 'libsick_scan_xd_shared_lib.so')
         # Create a sick_scan instance and initialize a TiM-5xx
         self.api_handle = SickScanApiCreate(self.sick_scan_library)
         attributes_dict = struct_to_dict(config.attributes)
-        launch_file = attributes_dict.get("launch_file", "")
-        host_arg = ""
-        receiver_arg = ""
-        launch_file_arg = f"launch/{attributes_dict['launch_file']}"
-        if "host" in attributes_dict:
-            host_arg = f"hostname:={attributes_dict['host']}"
-        if "receiver" in attributes_dict:
-            receiver_arg = f"udp_receiver_ip:={attributes_dict['receiver']}"
-        if "segments" in attributes_dict:
+        #launch_file = attributes_dict.get('launch_file', '')
+        arg_list = []
+        host_arg = ''
+        receiver_arg = ''
+        arg_list.append(f'{os.environ["SICK_LIDAR_LAUNCH_DIR"]}/{attributes_dict["launch_file"]}')
+        if 'host' in attributes_dict:
+            arg_list.append(f'hostname:={attributes_dict["host"]}')
+        if 'receiver' in attributes_dict:
+            arg_list.append(f'udp_receiver_ip:={attributes_dict["receiver"]}')
+        if 'segments' in attributes_dict:
             self.num_segments = int(round(attributes_dict['segments']))
         else:
             self.num_segments = 1
-
-        SickScanApiInitByLaunchfile(self.sick_scan_library, self.api_handle, " ".join([launch_file_arg, host_arg, receiver_arg]) )
+        SickScanApiInitByLaunchfile(self.sick_scan_library, self.api_handle, ' '.join(arg_list) )
 
     async def get_image(self, mime_type: str='', *, timeout: Optional[float]=None, **kwargs) -> Union[Image, RawImage]:
         raise NotImplementedError()

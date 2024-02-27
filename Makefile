@@ -1,16 +1,18 @@
+.DEFAULT_GOAL := buildso-generic
+
 WS=./sick_scan_ws
 MB=$(WS)/msgbuild
 LB=$(WS)/build
-LIB=./lib
 LDMRS_VER=0.1.0
 INSTALL_DIR=$(shell pwd)/sickag
 
-buildso:
-	# build so
-	@mkdir -p $(WS)
+mkdirs:
+	#setup directory structure
 	@mkdir -p $(MB)
 	@mkdir -p $(LB)
-	@mkdir -p $(INSTALL_DIR)
+	@mkdir -p $(INSTALL_DIR)/launch
+
+buildso: clean mkdirs
 	# ldmrs
 	@cd $(WS); git clone https://github.com/SICKAG/libsick_ldmrs.git
 	@cd $(WS); git clone https://github.com/SICKAG/msgpack11.git
@@ -23,22 +25,19 @@ buildso:
 	@cd $(LB); export ROS_VERSION=0; cmake -DCMAKE_INSTALL_PREFIX=$(INSTALL_DIR) -DCMAKE_CXX_FLAGS=-I\ $(INSTALL_DIR)/include -DROS_VERSION=0 -G "Unix Makefiles" ../sick_scan_xd; make -j4; make -j4 install
 
 buildso-generic: buildso
-	# build lidar shared object
+	# finalize install
+	cp $(WS)/sick_scan_xd/launch/*.launch $(INSTALL_DIR)/launch
 
 buildso-ros1: 
+	# place holder in case
 	@echo "not supported"
 
 buildso-ros2: 
+	# place holder in case
 	@echo "not supported"
 
-install:
-	# install libraries as required
-	@mkdir -p $(LIB)
-	cp $(WS)/libsick_ldmrs/build/src/libsick_ldmrs.so.$(LDMRS_VER) $(LIB)
-	@cd $(LIB); ln -s libsick_ldmrs.so.$(LDMRS_VER) libsick_ldmrs.so.0
-	@cd $(LIB); ln -s libsick_ldmrs.so.$(LDMRS_VER) libsick_ldmrs.so
-	
 clean:
 	@rm -rf $(WS)
-	@rm -rf $(LIB)
+
+clean-all: clean
 	@rm -rf $(INSTALL_DIR)

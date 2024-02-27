@@ -25,11 +25,16 @@ if [[ ! -f ${SCRIPT_DIR}/venv/bin/python ]]; then
 fi
 
 # SO for sick lidar
-SICK_LIDAR_SO=$()
+export SICK_LIDAR_SO="${SCRIPT_DIR}"/sickag/lib
+
+# launch directory for supported lidars
+export SICK_LIDAR_LAUNCH_DIR="${SCRIPT_DIR}"/sickag/launch
+
 # viam tools needed for utils.py
-RUST_UTILS_SO=$(find "${SCRIPT_DIR}" -name libviam_rust_utils.so -printf '%h')
+export RUST_UTILS_SO=$(find "${SCRIPT_DIR}" -name libviam_rust_utils.so -printf '%h')
 
 export LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:${RUST_UTILS_SO}:${SICK_LIDAR_SO}
+export PYTHONPATH=${PYTHONPATH}:${SCRIPT_DIR}/sickag/include/sick_scan_xd
 
 # execute script
 exec "${SCRIPT_DIR}"/venv/bin/python3 "${SCRIPT_DIR}"/main.py "$@"
