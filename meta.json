@@ -6,7 +6,7 @@
   "models": [
     {
       "api": "rdk:component:camera",
-      "model": "viam-soleng.sick.tim-lidar"
+      "model": "viam-soleng:sick:tim-lidar"
     }
   ],
   "entrypoint": "run.sh"
