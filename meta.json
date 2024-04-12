@@ -1,0 +1,13 @@
+{
+  "module_id": "viam-soleng:viam-sick",
+  "visibility": "public",
+  "url": "https://github.com/viam-soleng/viam-sick-lidar-integration",
+  "description": "Viam module for integrating with Sick Lidars, for more information plese see https://github.com/viam-soleng/viam-sick-lidar-integration",
+  "models": [
+    {
+      "api": "rdk:component:camera",
+      "model": "viam-soleng.sick.tim-lidar"
+    }
+  ],
+  "entrypoint": "run.sh"
+}

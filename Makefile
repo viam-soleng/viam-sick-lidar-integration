@@ -36,6 +36,9 @@ buildso-ros2:
 	# place holder in case
 	@echo "not supported"
 
+module.tar.gz: buildso-generic
+	tar czf $@ run.sh main.py requirements.txt components LICENSE sickag
+
 clean:
 	@rm -rf $(WS)
 

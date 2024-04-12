@@ -7,3 +7,7 @@ __pycache__
 sickag
 sick_scan_ws
 lib
+
+module.tar.gz
+
+*.swp
